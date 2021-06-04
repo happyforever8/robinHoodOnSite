@@ -17,7 +17,10 @@
     interval(10, pairs);
       
   }
-  
+  // step1 : create a map, the key is the timestamp / 10, the value is the price
+   // step2 : traverse the map and if the map contains the key
+   //           sort the value and get the low and high. 
+    // step3. if map doest not contains the key, get the previous price
   public static Map<Integer, List<Integer>> interval(int n, int[][] pairs){
     
     System.out.println("111");
