@@ -59,7 +59,17 @@ Prioritize matching the earliest alphabetical buy with the earliest alphabetical
 
   
   
-  class Solution {
+ import java.io.*;
+import java.util.*;
+
+/*
+ * To execute Java, please define "static void main" on a class
+ * named Solution.
+ *
+ * If you need more classes, simply define them inline.
+ */
+
+class Solution {
     
   static Map<String, String> map = new HashMap<>();
   public static void main(String[] args) {
@@ -79,18 +89,44 @@ Prioritize matching the earliest alphabetical buy with the earliest alphabetical
     //List<String> houseTrade = Arrays.asList(houseTrade1);
     //List<String> streetTrade = Arrays.asList(streetTrade1);
     
-     String[] houseTradefuzzey = {
+     String[] houseTrade1 = {
+ "AAPL,B,0100,ABC123", 
+ "GOOG,S,0050,CDC333"};
+    
+    String[] streetTrade1 = {
+  "FB,B,0100,GBGGGG", 
+ "AAPL,B,0100,ABC123"};
+    
+    
+    
+        String[] houseTrade2 = {
  "AAPL,B,0010,ABC123", 
  "AAPL,S,0015,ZYX444", 
  "AAPL,S,0015,ZYX444", 
  "GOOG,S,0050,GHG545"};
     
-    String[] streetTradeFuzzy = {
+    String[] streetTrade2 = {
   "GOOG,S,0050,GHG545", 
  "AAPL,S,0015,ZYX444", 
- "AAPL,B,0010,TTT222", "AAPL,S,0015,ZYX444"};
+ "AAPL,B,0500,TTT222"};
     
-    fuzzyMath(houseTradefuzzey, streetTradeFuzzy);
+    
+        String[] fuzzyhouseTrade2 = {
+ "AAPL,S,0010,ZYX444", 
+ "AAPL,S,0010,ZYX444", 
+ "AAPL,B,0010,ABC123", 
+ "GOOG,S,0050,GHG545"};
+    
+    String[] fuzzystreetTrade2 = {
+  "GOOG,S,0050,GHG545", 
+ "AAPL,S,0010,ZYX444", 
+ "AAPL,B,0010,TTT222"};
+    
+    
+   // match(houseTrade1, streetTrade1);
+    // match(houseTrade2, streetTrade2);
+   // match(fuzzyhouseTrade2, fuzzystreetTrade2);
+    offSetMatch(fuzzystreetTrade2);
   }
   
   
@@ -101,84 +137,83 @@ Prioritize matching the earliest alphabetical buy with the earliest alphabetical
     
   }
   
-  public static void fuzzyMath(String[] houseTrade, String[] streetTrade ){
-    
-    houseTrade = construct(houseTrade, 3);
-    
-    streetTrade = construct(streetTrade, 3);
-    
-    Arrays.sort(houseTrade);
-    Arrays.sort(streetTrade);
-    
-    List<String> list = new ArrayList<>();
-    
-    int h = 0;
-    int s = 0;
-    
-    while (h < houseTrade.length && s < streetTrade.length){
-        String currHouse = houseTrade[h];
-        String currStreet = streetTrade[s];
-      
-        if (currHouse.equals(currStreet)){
-          h++;
-          s++;
-          list.add(map.get(currHouse));
-          
-        } else if (currHouse.compareTo(currStreet) < 0){
-          //list.add(map.get(currHouse));
-          
-          h++;
-        } else {
-          //list.add(currHouse);
-          //list.add(map.get(currStreet));
-          s++;
-        }
-    }
-    
-//     while (h < houseTrade.length){
-//           list.add(houseTrade[h]);
-          
-//           h++;
-//     } 
-//     while (s < streetTrade.length){
-//           list.add( streetTrade[s]);
-//           s++;
-//     }
-    
-    for (String str : list){
-      System.out.println(str);
-    }
-  }
+  
 
-  public static String[] construct(String[] trade, int n){
+  public static String fuzzyHelper(String trade){
     
-    String[] result = new String[trade.length];
+    int index = trade.lastIndexOf(",");
+    return trade.substring(0, index);
+  
+  }
+  
+  public static String offSetHelper(String trade){
     
-    for (int i = 0; i < trade.length; i++){
-      String[] ch = trade[i].split(",");
+    String[] str = trade.split(",");
+    StringBuilder sb = new StringBuilder();
+    
+    sb.append(str[0]);
+    sb.append(str[2]);
+    
+    return sb.toString();
+  }
+  
+  
+  public static void offSetMatch(String[] trades){
+    //List<String> buyList = new ArrayList<>();
+    
+    //List<String> sellList = new ArrayList<>();
+    
+    
+    Map<String, List<String>> map = new HashMap<>();
+    
+    for (String str : trades){
+      String temp = offSetHelper(str);
       
-      StringBuilder sb = new StringBuilder();
+      map.putIfAbsent(temp, new ArrayList<>());
       
-      for (int j = 0; j < 3; j++){
-        if (j == 3){
-          sb.append(ch[j]);
+      map.get(temp).add(str);;
+    }
+    
+    for (Map.Entry<String, List<String>> entry : map.entrySet()){
+      
+      List<String> buyList = new ArrayList<>();
+      List<String> sellList = new ArrayList<>();
+      
+      for (String str : entry.getValue()){
+        String[] s = str.split(",");
+        
+        if (s[1].equals("B")){
+          buyList.add(str);
         } else {
-          sb.append(ch[j]).append(",");
+          sellList.add(str);
         }
+        
       }
       
-      result[i] = sb.toString();
-      map.put(result[i], trade[i]);
       
+      
+    for (int i = 0; i < buyList.size(); i++){
+      String buyStr = buyList.get(i);
+      
+      for (int j = 0; j < sellList.size(); j++){
+        System.out.println("-----"+ buyStr + "----" +sellList.get(j));
+      }
+    }
     }
     
-     Arrays.sort(result);
+
     
-    return result;
+    
+  }
+  
+  public static void fuzzyMatch(String[] houseTrade, String[] streetTrade){
+    //        String currHouse = fuzzyHelper(houseTrade[h]);
+    //       String currStreet = fuzzyHelper(streetTrade[s]); 
+      
   }
   
   
-  public static void exactNotMath(String[] houseTrade, String[] streetTrade ){
+  public static void match(String[] houseTrade, String[] streetTrade ){
     
     
     Arrays.sort(houseTrade);
@@ -186,12 +221,23 @@ Prioritize matching the earliest alphabetical buy with the earliest alphabetical
     
     List<String> list = new ArrayList<>();
     
+    
+    
+    
     int h = 0;
     int s = 0;
     
     while (h < houseTrade.length && s < streetTrade.length){
+      
+        //exact match
         String currHouse = houseTrade[h];
-        String currStreet = streetTrade[s];
+       String currStreet = streetTrade[s];
+      
+      //fuzzy match
+      
+//        String currHouse = fuzzyHelper(houseTrade[h]);
+//       String currStreet = fuzzyHelper(streetTrade[s]); 
+      
       
         if (currHouse.equals(currStreet)){
           h++;
