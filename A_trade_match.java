@@ -130,15 +130,129 @@ class Solution {
   }
   
   
+  //==========Not Match==========================================================================================
+  public static void exactMatch(String[] houseTrade, String[] streetTrade ){
+    Arrays.sort(houseTrade);
+    Arrays.sort(streetTrade);
+    
+    List<String> unMatchlist = exactMatchHelper(new ArrayList<>(), houseTrade, streetTrade, 0, 0);
+  
+    
+    for (String str : unMatchlist){
+      System.out.println(str);
+    }
+  }
   
   
   
-  public static void offSet(String[] trade){
+   public static List<String> exactMatchHelper(List<String> list, String[] houseTrade,String[] streetTrade, int hLen, int sLen ){
+    
+        
+
+    while (hLen < houseTrade.length && sLen < streetTrade.length){
+      
+        //exact match
+        String currHouse = houseTrade[hLen];
+        String currStreet = streetTrade[sLen];
+      
+      
+        if (currHouse.equals(currStreet)){
+          exactMath.add(currStreet);
+          hLen++;
+          sLen++;
+          
+        } else if (currHouse.compareTo(currStreet) < 0){
+          list.add(currHouse);
+          
+          hLen++;
+        } else {
+          //list.add(currHouse);
+          list.add(currStreet);
+          sLen++;
+        }
+    }
+    
+    while (hLen < houseTrade.length){
+          list.add(houseTrade[hLen]);
+          
+          hLen++;
+    } 
+    while (sLen < streetTrade.length){
+          list.add(streetTrade[sLen]);
+          sLen++;
+    }
+    
+    return list;
+  }
+}
+
+
+//===================================FUzzy Match=================================================================
+  static List<String> exactMath = new ArrayList<>();
+  
+  
+  public static List<String> fuzzyMatch(String[] houseTrade, String[] streetTrade){
+    List<String> fuzzyMath = new ArrayList<>();
+    
+    Arrays.sort(houseTrade);
+    Arrays.sort(streetTrade);
+    
+    
+    
+    List<String> list = new ArrayList<>();
+  
+    exactMatchHelper(new ArrayList<>(), houseTrade,streetTrade, 0, 0 );
+    
+    
+    fuzzyMatchHelper(list, houseTrade, streetTrade, 0, 0);
+  
+    // for (String str : exactMath){
+    //   System.out.println(str);
+    // }
+    // for (String str : list){
+    //   System.out.println(str);
+    // }
+    
+    fuzzyMath.addAll(exactMath);
+    fuzzyMath.addAll(list);
+    
+    return fuzzyMath;
+      
+  }
+  
+ 
+   public static void fuzzyMatchHelper(List<String> list, String[] houseTrade,String[] streetTrade, int hLen, int sLen ){
+    
+    while (hLen < houseTrade.length && sLen < streetTrade.length){
+      
+      
+      //fuzzy match
+      
+      String currHouse = fuzzyHelper(houseTrade[hLen]);
+      String currStreet = fuzzyHelper(streetTrade[sLen]); 
+      
+      
+        if (currHouse.equals(currStreet)){
+          if (!exactMath.contains(houseTrade[hLen])){
+               list.add(houseTrade[hLen]);
+               list.add(streetTrade[sLen]);
+          }
+
+          hLen++;
+          sLen++;
+          
+        } else if (currHouse.compareTo(currStreet) < 0){
+          
+          
+          hLen++;
+        } else {
+          sLen++;
+        }
+    }
     
   }
   
   
-
   public static String fuzzyHelper(String trade){
     
     int index = trade.lastIndexOf(",");
@@ -146,7 +260,11 @@ class Solution {
   
   }
   
-  public static String offSetHelper(String trade){
+  
+  
+  ==========offSetMatch===============================================================
+    
+     public static String offSetHelper(String trade){
     
     String[] str = trade.split(",");
     StringBuilder sb = new StringBuilder();
@@ -159,10 +277,9 @@ class Solution {
   
   
   public static void offSetMatch(String[] trades){
-    //List<String> buyList = new ArrayList<>();
+
     
-    //List<String> sellList = new ArrayList<>();
-    
+    List<String> offset = new ArrayList<>();
     
     Map<String, List<String>> map = new HashMap<>();
     
@@ -171,7 +288,7 @@ class Solution {
       
       map.putIfAbsent(temp, new ArrayList<>());
       
-      map.get(temp).add(str);;
+      map.get(temp).add(str);
     }
     
     for (Map.Entry<String, List<String>> entry : map.entrySet()){
@@ -190,84 +307,31 @@ class Solution {
         
       }
       
-      
-      
     for (int i = 0; i < buyList.size(); i++){
       String buyStr = buyList.get(i);
       
       for (int j = 0; j < sellList.size(); j++){
+        offset.add(buyStr);
+        offset.add(sellList.get(j));
         System.out.println("-----"+ buyStr + "----" +sellList.get(j));
       }
     }
-    }
-    
+      
+      
 
-    
-    
-  }
-  
-  public static void fuzzyMatch(String[] houseTrade, String[] streetTrade){
-    //        String currHouse = fuzzyHelper(houseTrade[h]);
-    //       String currStreet = fuzzyHelper(streetTrade[s]); 
+    }
+          List<String> fuzzyMatch3 =  fuzzyMatch(trades, trades);
       
-  }
-  
-  
-  public static void match(String[] houseTrade, String[] streetTrade ){
-    
-    
-    Arrays.sort(houseTrade);
-    Arrays.sort(streetTrade);
-    
-    List<String> list = new ArrayList<>();
-    
-    
-    
-    
-    int h = 0;
-    int s = 0;
-    
-    while (h < houseTrade.length && s < streetTrade.length){
+      for (String str : fuzzyMatch3){
+         System.out.println("---fuzzy match is--"+ str );
+      }
       
-        //exact match
-        String currHouse = houseTrade[h];
-       String currStreet = streetTrade[s];
-      
-      //fuzzy match
-      
-//        String currHouse = fuzzyHelper(houseTrade[h]);
-//       String currStreet = fuzzyHelper(streetTrade[s]); 
-      
-      
-        if (currHouse.equals(currStreet)){
-          h++;
-          s++;
-          
-        } else if (currHouse.compareTo(currStreet) < 0){
-          list.add(currHouse);
-          
-          h++;
-        } else {
-          //list.add(currHouse);
-          list.add(currStreet);
-          s++;
+      for (String s : fuzzyMatch3){
+        if (offset.contains(s)){
+           System.out.println("---fuzzy match oder  is--"+ s );
         }
-    }
+      }
     
-    while (h < houseTrade.length){
-          list.add(houseTrade[h]);
-          
-          h++;
-    } 
-    while (s < streetTrade.length){
-          list.add(streetTrade[s]);
-          s++;
-    }
     
-    for (String str : list){
-      System.out.println(str);
-    }
   }
-}
-
-
+    
