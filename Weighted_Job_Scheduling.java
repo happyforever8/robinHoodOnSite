@@ -31,8 +31,7 @@ To find the profit with inclusion of job[i].
   
   
   
-  class Solution {
-  public static void main(String[] args) {
+ public static void main(String[] args) {
     ArrayList<String> strings = new ArrayList<String>();
     strings.add("Hello, World!");
     strings.add("Welcome to CoderPad.");
@@ -42,58 +41,88 @@ To find the profit with inclusion of job[i].
       System.out.println(string);
     }
     
-    String[][] pro = {{"1","AAPL", "B", "10", "10"},{ "3","GOOG", "B", "20", "5"}, 
-                    {"10","AAPL", "S", "5", "15"}};
-    buildPortfolio(pro, 1000);
-    
+     Job jobs[] = {new Job(1, 2, 50), new Job(3, 5, 20),
+                      new Job(6, 19, 100), new Job(2, 100, 200)};
+  
+        System.out.println("Optimal profit is " + schedule(jobs));
   }
   
-  public static void buildPortfolio(String[][] pro, int amount){
-      Map<String, List<List<String>>> portMap = new HashMap<>();
-      Map<String, String> resultPro = new TreeMap<>();
-      
-      for (String[] str : pro){
-        
-        String symbol = str[1];
-        portMap.putIfAbsent(symbol, new ArrayList<>());
-        
-        List<String> list = Arrays.asList(str[2], str[3], str[4]);
-        //   new ArrayList<>();
-        // list.add(str[2]);
-        // list.add(str[3]);
-        // list.add(str[4]);
-        // list.add(str[5]);
-        
-        //list.add(Arrays.asList());
-        portMap.get(symbol).add(list);
-      }
-    int total = 0;
-    
-    for (Map.Entry<String, List<List<String>>> entry : portMap.entrySet()){
-      
-      int currShare = 0;
-      
-      for (List<String> list : entry.getValue()){
-        
-          int quantity = Integer.parseInt(list.get(1));
-          int price = Integer.parseInt(list.get(2));
-      
-          if (list.get(0).equals("B")){
-            total += quantity * price;
-            currShare += quantity;
-          } else if (list.get(0).equals("S")){
-            total -= quantity * price;
-            currShare -= quantity;
+  static public int binarySearch(Job jobs[], int index)
+    {
+        // Initialize 'lo' and 'hi' for Binary Search
+        int lo = 0, hi = index - 1;
+  
+        // Perform binary Search iteratively
+        while (lo <= hi)
+        {
+            int mid = (lo + hi) / 2;
+            if (jobs[mid].finish <= jobs[index].start)
+            {
+                if (jobs[mid + 1].finish <= jobs[index].start)
+                    lo = mid + 1;
+                else
+                    return mid;
+            }
+            else
+                hi = mid - 1;
+        }
+  
+        return -1;
+    }
+  
+    // The main function that returns the maximum possible
+    // profit from given array of jobs
+    static public int schedule(Job jobs[])
+    {
+        // Sort jobs according to finish time
+        Arrays.sort(jobs, (a, b) -> a.finish - b.finish);
+  
+        // Create an array to store solutions of subproblems.
+        // table[i] stores the profit for jobs till jobs[i]
+        // (including jobs[i])
+        int n = jobs.length;
+        int table[] = new int[n];
+        table[0] = jobs[0].profit;
+  
+        // Fill entries in M[] using recursive property
+        for (int i=1; i<n; i++)
+        {
+            // Find profit including the current job
+            int inclProf = jobs[i].profit;
+           // int l = binarySearch(jobs, i);
+          int l = latestNonConflict(jobs, i);
+            if (l != -1)
+                inclProf += table[l];
+  
+            // Store maximum of including and excluding
+            table[i] = Math.max(inclProf, table[i-1]);
+        }
+  
+        return table[n-1];
+    }
+  
+  
+      static public  int latestNonConflict(Job arr[], int i)
+      {
+          for (int j=i-1; j>=0; j--)
+          {
+              if (arr[j].finish <= arr[i].start)
+                  return j;
           }
-
+          return -1;
       }
-      resultPro.put(entry.getKey(), String.valueOf(currShare));
-    }
-    System.out.println("CASH" + "====" + (amount - total));
-    for (Map.Entry<String, String> entry: resultPro.entrySet()){
-      System.out.println(entry.getKey() + "===" + entry.getValue());
-    }
-    //System.out.println("CASH" + "====" + (amount - total));
-  }
 }
 
+
+class Job
+{
+    int start, finish, profit;
+  
+    // Constructor
+    Job(int start, int finish, int profit)
+    {
+        this.start = start;
+        this.finish = finish;
+        this.profit = profit;
+    }
+}
