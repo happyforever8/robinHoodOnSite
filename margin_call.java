@@ -63,20 +63,6 @@ the corresponding output would be
 
 
 
-/*
- * Click `Run` to execute the snippet below!
- */
-
-import java.io.*;
-import java.util.*;
-
-/*
- * To execute Java, please define "static void main" on a class
- * named Solution.
- *
- * If you need more classes, simply define them inline.
- */
-
 class Solution {
   public static void main(String[] args) {
     ArrayList<String> strings = new ArrayList<String>();
@@ -95,41 +81,13 @@ class Solution {
                     {"3", "GOOG", "B", "15", "20"}};
     
     
-    buildPortfolio(pro1, 1000);
+        String[][] pro3 = {{"1", "AAPL", "B", "5", "100"},{"2", "GOOG", "B", "5", "75"}, 
+                    {"3", "AAPLO", "B", "5", "50"}};
+    buildPortfolio(pro3, 1000);
     
   }
   
   
-  public static void margin(String[][] pro, int amount){
-    
-    Map<String, PriorityQueue<int[]>> map = new HashMap<>();
-    
-    int leftAmount = 0;
-    
-    PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> b[4]- a[4]);
-    
-    for (String[] str : pro){
-          int quantity = Integer.parseInt(str[3]);
-          int price = Integer.parseInt(str[4]);
-      
-      
-      if (str[2].equals("B")){
-        int currAmount = quantity * price;
-        
-        map.putIfAbsent(str[1], new PriorityQueue<>());
-        
-        leftAmount = amount - currAmount;
-        
-        
-        
-      } else if (str[2].equals("S")){
-      
-      
-      }
-    }
-    
-    
-  }
   
   public static void buildPortfolio(String[][] pro, int amount){
       Map<String, List<List<String>>> portMap = new HashMap<>();
@@ -138,7 +96,12 @@ class Solution {
       Map<String, Integer> resultPro = new TreeMap<>();
     
       //margin
+      // key is the symbol, value is the arr curr qualiy + price
       Map<String, int[]> map = new TreeMap<>();
+    
+      //collaberal
+      Map<String, String> colMap = new HashMap<>();
+    
     
       int totalAmount = 0;
       
@@ -164,6 +127,16 @@ class Solution {
             
           
           
+          //Collateral
+          if (symbol.contains("O")){
+            int index = symbol.indexOf('O');
+            
+            if (resultPro.containsKey(symbol.substring(0, index))){
+              colMap.put(symbol.substring(0, index), symbol);
+            }
+          }
+
+          
           //marign 
           int[] marginArray = map.getOrDefault(symbol, new int[]{currQuality + quality, price});
           map.put(symbol, marginArray);
@@ -181,6 +154,16 @@ class Solution {
             while (totalAmount > 1000){
               
                 Map.Entry<String, int[]> currMap = pq.poll();
+              
+               //Collateral
+                // from the pq, do not add the symbol with o related
+                 if (colMap.containsKey(currMap.getKey())){
+                    continue;
+                 }
+              
+              
+                //Collateral
+                 
                 String currKey = currMap.getKey();
                 int currCount = currMap.getValue()[0];
               
@@ -195,6 +178,11 @@ class Solution {
                 prev = currMap;
 
             }
+          
+          
+          
+          
+          
           
         } else if (sign.equals("S")){
             resultPro.put(str[1], currQuality - quality);
