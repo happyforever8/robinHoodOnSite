@@ -38,21 +38,126 @@ Buy 2 shares of AAPL ($60 value)
                                   
                                   
                                   
-                                  List<Tuple> tuples = new ArrayList<>();
+  class Solution {
+  public static void main(String[] args) {
+    ArrayList<String> strings = new ArrayList<String>();
+    strings.add("Hello, World!");
+    strings.add("Welcome to CoderPad.");
+    strings.add("This pad is running Java " + Runtime.version().feature());
+
+    for (String string : strings) {
+      System.out.println(string);
+    }
+    
+    
+    int[] prices = {15, 40, 25, 30};
+    int[] futurePrices = {45, 50, 35, 25};
+    int[] maxUnit = {3, 3, 3, 4};
+    int amount = 140;
+    
+    
+    int res = maxProfit(prices, futurePrices, maxUnit, amount);
+    
+    //System.out.println(res);
+    System.out.println(optimizeWithFractionals(140, prices, futurePrices, maxUnit));
+    
+  }
+  
+  
+  
+    // without fractional, it will return 255
+  
+  public static int maxProfit(int[] prices, int[] futurePrices, int[] maxUnit, int amount){
+    int[][] dp = new int[prices.length][amount + 1];
+    
+    return maxHelper(prices, futurePrices, maxUnit, amount, dp, 0);
+  }
+  
+  public static int maxHelper(int[] prices, int[] futurePrices, int[] maxUnit, int amount, int[][] dp, int index){
+    
+    if (index == prices.length){
+      return amount;
+    }
+    
+    if (dp[index][amount] != 0){
+      return dp[index][amount];
+    }
+    
+    if (prices[index] >= futurePrices[index]){
+      // not a profit as the futrue prices is lower than price
+      return 0;
+    
+    }
+    
+    int max = Integer.MIN_VALUE;
+    
+    for (int i = 0; i <= maxUnit[index]; i++){
+      if (amount <= i * prices[index]){
+          break;
+      }
+      
+      int res = maxHelper(prices, futurePrices, maxUnit, amount - i * prices[index], dp, index + 1);
+      
+      max = Math.max(max, res + i * futurePrices[index]);
+    }
+    
+    dp[index][amount] = max;
+    
+    return max;
+  }
+  
+  // this will return 265
+  
+  static double optimizeWithFractionals(int amount, int[] currentPrice, int[] futurePrice, int[] units) {
+    
+    // we need to sort by ratio, so int[] does not work as the ratio is double
+    
+//     List<int[]> stock = new ArrayList<>();
+    
+//     for (int i = 0; i < prices.length; i++){
+//       double ratio = (double) futurePrices[i] / prices[i];
+      
+//       int[] stockInfo = new int[]{ratio, prcies[i], futurePrices[i], maxUnit[i]};
+      
+//       stock.add(stockInfo);
+//     }
+    
+//     Collections.sort(stock, (a, b) -> b[0] - a[0]);
+    
+//     int index = 0;
+//     double maxProfit = 0;
+    
+//     while (index < stock.size() && amount > 0){
+//       double numShares = Math.min(amount / (double)prices[index], maxUnit[index]);
+      
+//       maxProfit += numShares * futurePrices[index];
+//       amount -= numShares * prices[index];
+//       index++;
+//     }
+//     return maxProfit;
+    
+    
+    List<stockInfo> stockInfos = new ArrayList<>();
+    
     for (int i = 0; i < currentPrice.length; i++) {
-        tuples.add(new Tuple(((double) futurePrice[i])/currentPrice[i], currentPrice[i], futurePrice[i], units[i]));
+        stockInfos.add(new stockInfo(((double) futurePrice[i])/currentPrice[i], currentPrice[i], futurePrice[i], units[i]));
     }
     // Just sort in the descending order of the futurePrice/currentPrice ratio, because the higher the ratio, the higher the profit.
-    tuples.sort((Tuple t1, Tuple t2) -> (Double.compare(t2.ratio, t1.ratio)));
+    stockInfos.sort((stockInfo t1, stockInfo t2) -> (Double.compare(t2.ratio, t1.ratio)));
+    
+    
+    
+    // after the sort, we also need to reassign the value of the currPrices and future prices
+    // as after sort, the order changes
     for (int i = 0; i < currentPrice.length; i++) {
-        currentPrice[i] = tuples.get(i).currentPrice;
-        futurePrice[i] = tuples.get(i).futurePrice;
-        units[i] = tuples.get(i).unit;
+        currentPrice[i] = stockInfos.get(i).currentPrice;
+        futurePrice[i] = stockInfos.get(i).futurePrice;
+        units[i] = stockInfos.get(i).unit;
     }
     int i = 0;
     double res = 0d;
     // greedily now start buying from the best to worse.
-    while (i < tuples.size() && amount > 0) {
+    while (i < stockInfos.size() && amount > 0) {
         double numShares = Math.min(amount / (double) currentPrice[i], units[i]);
         res += numShares * futurePrice[i];
         amount -= numShares * currentPrice[i];
@@ -60,8 +165,9 @@ Buy 2 shares of AAPL ($60 value)
     }
     return res;
 }
-static class Tuple {
-    public Tuple(double r, int cp, int fp, int u) {
+  
+  static class stockInfo {
+    public stockInfo(double r, int cp, int fp, int u) {
         ratio = r;
         currentPrice = cp;
         futurePrice = fp;
@@ -73,36 +179,9 @@ static class Tuple {
     int unit;
 }
 
-int optimizeWithoutFractionals(int amount, int[] currentPrice, int[] futurePrice, int[] units) {
-    return dfs(0, amount, currentPrice, futurePrice, units, new Integer[currentPrice.length][amount + 1]);
 }
 
-int dfs(int start, int amount, int[] currentPrice, int[] futurePrice, int[] units, Integer[][] matrix) {
-    if (start == currentPrice.length) {
-        // reached the end, return the remaining (cash) balance.
-        return amount;
-    }
-    if (matrix[start][amount] != null) {
-        // cache hit
-        return matrix[start][amount];
-    }
-    if (currentPrice[start] >= futurePrice[start]) {
-        // not a profitable transaction as futurePrice will not be any higher.
-        return 0;
-    }
-    int max = Integer.MIN_VALUE;
-    for (int i = 0; i <= units[start]; i++) {
-        // i == 0, implies no shares bought.
-        if (amount < i * currentPrice[start]) {
-            // not enough amount to buy i shares, break. no point of going further.
-            break;
-        }
-        // we can buy i shares of type [start] at currentPrice[start], move on to the next share with the remaining amount
-        // and see what is the best we can do.
-        int res = dfs(start + 1, amount - i * currentPrice[start], currentPrice, futurePrice, units, matrix);
-        max = Math.max(max, res + i * futurePrice[start]);
-    }
-    // when we came to [start] indexed share, we only had amount left. And maximum we could do is: max.
-    matrix[start][amount] = max;
-    return max;
-}
+
+
+
+
