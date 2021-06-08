@@ -92,7 +92,6 @@ class Solution {
   public static void buildPortfolio(String[][] pro, int amount){
       Map<String, List<List<String>>> portMap = new HashMap<>();
     
-    
       Map<String, Integer> resultPro = new TreeMap<>();
     
       //margin
@@ -101,12 +100,9 @@ class Solution {
     
       //collaberal
       Map<String, String> colMap = new HashMap<>();
-    
-    
       int totalAmount = 0;
       
       for (String[] str : pro){
-        
         String symbol = str[1];
         String sign = str[2];
         int quality = Integer.parseInt(str[3]);
@@ -114,19 +110,13 @@ class Solution {
         
         //portMap.putIfAbsent(symbol, new ArrayList<>());
         
-        int currQuality = resultPro.getOrDefault(symbol, 0);
-        
-        
-        
-        
+        int currQuality = resultPro.getOrDefault(symbol, 0);        
         if (sign.equals("B")){
           //List<String> list = Arrays.asList(str[1],str[2], str[3], str[4]);
                     
             resultPro.put(str[1], currQuality + quality);
             totalAmount += quality * price;
-            
-          
-          
+             
           //Collateral
           if (symbol.contains("O")){
             int index = symbol.indexOf('O');
@@ -177,12 +167,7 @@ class Solution {
 
                 prev = currMap;
 
-            }
-          
-          
-          
-          
-          
+            }        
           
         } else if (sign.equals("S")){
             resultPro.put(str[1], currQuality - quality);
