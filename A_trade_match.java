@@ -70,8 +70,6 @@ import java.util.*;
  */
 
 class Solution {
-    
-  static Map<String, String> map = new HashMap<>();
   public static void main(String[] args) {
     ArrayList<String> strings = new ArrayList<String>();
     strings.add("Hello, World!");
@@ -90,32 +88,46 @@ class Solution {
     //List<String> streetTrade = Arrays.asList(streetTrade1);
     
      String[] houseTrade1 = {
- "AAPL,B,0100,ABC123", 
- "GOOG,S,0050,CDC333"};
-    
-    String[] streetTrade1 = {
-  "FB,B,0100,GBGGGG", 
- "AAPL,B,0100,ABC123"};
-    
-    
-    
-        String[] houseTrade2 = {
  "AAPL,B,0010,ABC123", 
  "AAPL,S,0015,ZYX444", 
  "AAPL,S,0015,ZYX444", 
  "GOOG,S,0050,GHG545"};
+    
+    String[] streetTrade1 = {
+  "GOOG,S,0050,GHG545", 
+ "AAPL,S,0015,ZYX444", 
+ "AAPL,B,0500,TTT222"};
+    
+    
+    
+        String[] houseTrade2 = {
+"AAPL, B, 15, UUID1", 
+"GOOG, S, 5, UUID2", 
+"AAPLE, B, 15, UUID1"};
     
     String[] streetTrade2 = {
   "GOOG,S,0050,GHG545", 
  "AAPL,S,0015,ZYX444", 
  "AAPL,B,0500,TTT222"};
     
+            String[] houseTrade3 = {
+ "AAPL,B,0100,ABC123", 
+ "AAPL,B,0100,ABC123", 
+ "AAPL,B,0100,ABC123", 
+ "GOOG,S,0050,CDC333"};
+    
+    String[] streetTrade3 = {
+  "FB,B,0100,GBGGGG", 
+ "AAPL,B,0100,ABC123"};
+    
+    
+    
     
         String[] fuzzyhouseTrade2 = {
  "AAPL,S,0010,ZYX444", 
  "AAPL,S,0010,ZYX444", 
  "AAPL,B,0010,ABC123", 
- "GOOG,S,0050,GHG545"};
+ "GOOG,S,0050,GHG555"};
     
     String[] fuzzystreetTrade2 = {
   "GOOG,S,0050,GHG545", 
@@ -123,14 +135,141 @@ class Solution {
  "AAPL,B,0010,TTT222"};
     
     
-   // match(houseTrade1, streetTrade1);
+    //exactMatch(houseTrade, streetTrade);
     // match(houseTrade2, streetTrade2);
-   // match(fuzzyhouseTrade2, fuzzystreetTrade2);
+   // fuzzyMatch(fuzzyhouseTrade2, fuzzystreetTrade2);
     offSetMatch(fuzzystreetTrade2);
+  }
+
+
+  
+  public static String offSetHelper(String trade){
+    
+    String[] str = trade.split(",");
+    StringBuilder sb = new StringBuilder();
+    
+    sb.append(str[0]);
+    sb.append(str[2]);
+    
+    return sb.toString();
+  }
+  
+  //==================offSetMatch===================
+  public static void offSetMatch(String[] trades){
+    List<String> offset = new ArrayList<>();
+    
+    Map<String, List<String>> map = new HashMap<>();
+    
+    for (String str : trades){
+      String temp = offSetHelper(str);
+      // the key is the symbol + quantity
+      map.putIfAbsent(temp, new ArrayList<>());
+      map.get(temp).add(str);
+    }
+    
+    for (Map.Entry<String, List<String>> entry : map.entrySet()){
+      
+      List<String> buyList = new ArrayList<>();
+      List<String> sellList = new ArrayList<>();
+      
+      for (String str : entry.getValue()){
+        String[] s = str.split(",");
+        
+        if (s[1].equals("B")){
+          buyList.add(str);
+        } else {
+          sellList.add(str);
+        }
+        
+      }
+      
+    for (int i = 0; i < buyList.size(); i++){
+      String buyStr = buyList.get(i);
+      
+      for (int j = 0; j < sellList.size(); j++){
+        offset.add(buyStr);
+        offset.add(sellList.get(j));
+        System.out.println("-----"+ buyStr + "----" +sellList.get(j));
+      }
+      }
+    }
+    
+    
+//     List<String> fuzzyMatch3 =  fuzzyMatch(trades, trades);
+      
+//       for (String str : fuzzyMatch3){
+//          System.out.println("---fuzzy match is--"+ str );
+//       }
+      
+//       for (String s : fuzzyMatch3){
+//         if (offset.contains(s)){
+//            System.out.println("---fuzzy match oder  is--"+ s );
+//         }
+//       }
+    
+    
+  }
+    
+ //===================================FUzzy Match=================================================================
+  static List<String> exactMath = new ArrayList<>();
+  
+  
+  public static List<String> fuzzyMatch(String[] houseTrade, String[] streetTrade){
+    List<String> fuzzyMath = new ArrayList<>();
+    
+    Arrays.sort(houseTrade);
+    Arrays.sort(streetTrade);
+    List<String> list = new ArrayList<>();
+    // get the exact match
+    exactMatchHelper(new ArrayList<>(), houseTrade,streetTrade, 0, 0 );
+    // get the fuzzy match which is excluded the exact match
+    fuzzyMatchHelper(list, houseTrade, streetTrade, 0, 0);
+    
+    fuzzyMath.addAll(exactMath);
+    fuzzyMath.addAll(list);
+    
+    return fuzzyMath;
+      
+  }
+  
+ 
+   public static void fuzzyMatchHelper(List<String> list, String[] houseTrade,String[] streetTrade, int hLen, int sLen ){
+    
+    while (hLen < houseTrade.length && sLen < streetTrade.length){
+      //fuzzy match
+      
+      String currHouse = fuzzyHelper(houseTrade[hLen]);
+      String currStreet = fuzzyHelper(streetTrade[sLen]); 
+      
+        if (currHouse.equals(currStreet)){
+          // exclude the exactMatch and add later
+          if (!exactMath.contains(houseTrade[hLen])){ 
+               list.add(houseTrade[hLen]);
+               list.add(streetTrade[sLen]);
+          }
+          hLen++;
+          sLen++;
+          
+        } else if (currHouse.compareTo(currStreet) < 0){
+          
+          hLen++;
+        } else {
+          sLen++;
+        }
+    }
+  }
+  
+  public static String fuzzyHelper(String trade){
+    
+    int index = trade.lastIndexOf(",");
+    return trade.substring(0, index);
+  
   }
   
   
-  //==========Not Match==========================================================================================
+  
+  
+  //====================================================================================================
   public static void exactMatch(String[] houseTrade, String[] streetTrade ){
     Arrays.sort(houseTrade);
     Arrays.sort(streetTrade);
@@ -143,9 +282,8 @@ class Solution {
     }
   }
   
-  
-  
-   public static List<String> exactMatchHelper(List<String> list, String[] houseTrade,String[] streetTrade, int hLen, int sLen ){
+
+  public static List<String> exactMatchHelper(List<String> list, String[] houseTrade,String[] streetTrade, int hLen, int sLen ){
     
         
 
@@ -154,7 +292,6 @@ class Solution {
         //exact match
         String currHouse = houseTrade[hLen];
         String currStreet = streetTrade[sLen];
-      
       
         if (currHouse.equals(currStreet)){
           exactMath.add(currStreet);
@@ -187,151 +324,3 @@ class Solution {
 }
 
 
-//===================================FUzzy Match=================================================================
-  static List<String> exactMath = new ArrayList<>();
-  
-  
-  public static List<String> fuzzyMatch(String[] houseTrade, String[] streetTrade){
-    List<String> fuzzyMath = new ArrayList<>();
-    
-    Arrays.sort(houseTrade);
-    Arrays.sort(streetTrade);
-    
-    
-    
-    List<String> list = new ArrayList<>();
-  
-    exactMatchHelper(new ArrayList<>(), houseTrade,streetTrade, 0, 0 );
-    
-    
-    fuzzyMatchHelper(list, houseTrade, streetTrade, 0, 0);
-  
-    // for (String str : exactMath){
-    //   System.out.println(str);
-    // }
-    // for (String str : list){
-    //   System.out.println(str);
-    // }
-    
-    fuzzyMath.addAll(exactMath);
-    fuzzyMath.addAll(list);
-    
-    return fuzzyMath;
-      
-  }
-  
- 
-   public static void fuzzyMatchHelper(List<String> list, String[] houseTrade,String[] streetTrade, int hLen, int sLen ){
-    
-    while (hLen < houseTrade.length && sLen < streetTrade.length){
-      
-      
-      //fuzzy match
-      
-      String currHouse = fuzzyHelper(houseTrade[hLen]);
-      String currStreet = fuzzyHelper(streetTrade[sLen]); 
-      
-      
-        if (currHouse.equals(currStreet)){
-          if (!exactMath.contains(houseTrade[hLen])){
-               list.add(houseTrade[hLen]);
-               list.add(streetTrade[sLen]);
-          }
-
-          hLen++;
-          sLen++;
-          
-        } else if (currHouse.compareTo(currStreet) < 0){
-          
-          
-          hLen++;
-        } else {
-          sLen++;
-        }
-    }
-    
-  }
-  
-  
-  public static String fuzzyHelper(String trade){
-    
-    int index = trade.lastIndexOf(",");
-    return trade.substring(0, index);
-  
-  }
-  
-  
-  
-  ==========offSetMatch===============================================================
-    
-     public static String offSetHelper(String trade){
-    
-    String[] str = trade.split(",");
-    StringBuilder sb = new StringBuilder();
-    
-    sb.append(str[0]);
-    sb.append(str[2]);
-    
-    return sb.toString();
-  }
-  
-  
-  public static void offSetMatch(String[] trades){
-
-    
-    List<String> offset = new ArrayList<>();
-    
-    Map<String, List<String>> map = new HashMap<>();
-    
-    for (String str : trades){
-      String temp = offSetHelper(str);
-      
-      map.putIfAbsent(temp, new ArrayList<>());
-      
-      map.get(temp).add(str);
-    }
-    
-    for (Map.Entry<String, List<String>> entry : map.entrySet()){
-      
-      List<String> buyList = new ArrayList<>();
-      List<String> sellList = new ArrayList<>();
-      
-      for (String str : entry.getValue()){
-        String[] s = str.split(",");
-        
-        if (s[1].equals("B")){
-          buyList.add(str);
-        } else {
-          sellList.add(str);
-        }
-        
-      }
-      
-    for (int i = 0; i < buyList.size(); i++){
-      String buyStr = buyList.get(i);
-      
-      for (int j = 0; j < sellList.size(); j++){
-        offset.add(buyStr);
-        offset.add(sellList.get(j));
-        System.out.println("-----"+ buyStr + "----" +sellList.get(j));
-      }
-    }
-      
-      
-
-    }
-          List<String> fuzzyMatch3 =  fuzzyMatch(trades, trades);
-      
-      for (String str : fuzzyMatch3){
-         System.out.println("---fuzzy match is--"+ str );
-      }
-      
-      for (String s : fuzzyMatch3){
-        if (offset.contains(s)){
-           System.out.println("---fuzzy match oder  is--"+ s );
-        }
-      }
-    
-    
-  }
-    
