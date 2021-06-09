@@ -70,6 +70,9 @@ import java.util.*;
  */
 
 class Solution {
+    
+  static Map<String, String> map = new HashMap<>();
+  
   public static void main(String[] args) {
     ArrayList<String> strings = new ArrayList<String>();
     strings.add("Hello, World!");
@@ -127,18 +130,18 @@ class Solution {
  "AAPL,S,0010,ZYX444", 
  "AAPL,S,0010,ZYX444", 
  "AAPL,B,0010,ABC123", 
- "GOOG,S,0050,GHG555"};
+ "GOOG,S,0050,GHG545"};
     
     String[] fuzzystreetTrade2 = {
-  "GOOG,S,0050,GHG545", 
+  "GOOG,S,0050,GHG555", 
  "AAPL,S,0010,ZYX444", 
  "AAPL,B,0010,TTT222"};
     
     
     //exactMatch(houseTrade, streetTrade);
     // match(houseTrade2, streetTrade2);
-   // fuzzyMatch(fuzzyhouseTrade2, fuzzystreetTrade2);
-    offSetMatch(fuzzystreetTrade2);
+    fuzzyMatch(fuzzyhouseTrade2, fuzzystreetTrade2);
+    //offSetMatch(fuzzystreetTrade2);
   }
 
 
@@ -154,7 +157,7 @@ class Solution {
     return sb.toString();
   }
   
-  //==================offSetMatch===================
+  
   public static void offSetMatch(String[] trades){
     List<String> offset = new ArrayList<>();
     
@@ -215,7 +218,7 @@ class Solution {
   
   
   public static List<String> fuzzyMatch(String[] houseTrade, String[] streetTrade){
-    List<String> fuzzyMath = new ArrayList<>();
+    List<String> fuzMatch = new ArrayList<>();
     
     Arrays.sort(houseTrade);
     Arrays.sort(streetTrade);
@@ -225,10 +228,18 @@ class Solution {
     // get the fuzzy match which is excluded the exact match
     fuzzyMatchHelper(list, houseTrade, streetTrade, 0, 0);
     
-    fuzzyMath.addAll(exactMath);
-    fuzzyMath.addAll(list);
+    fuzMatch.addAll(exactMath);
+    fuzMatch.addAll(list);
     
-    return fuzzyMath;
+    for (String str : exactMath){
+      System.out.println(str);
+    }
+    System.out.println("===========");
+    for (String str : list){
+      System.out.println(str);
+    }
+    
+    return fuzMatch;
       
   }
   
