@@ -182,6 +182,22 @@ Buy 2 shares of AAPL ($60 value)
 }
 
 
-
+  // one transaction 
+  public static int One_transaction_maxProfit(int[] prices, int[] sellPrices, int[] unit, int amount){
+    
+      int maxProfit = 0;
+    
+      for (int i = 0; i < unit.length; i++){
+        int currUnit = 1;
+        
+        while (currUnit <= unit[i] && currUnit * prices[i] <= amount){
+          currUnit++;
+        }
+        
+        maxProfit = Math.max(maxProfit, (sellPrices[i] -  prices[i]) * (currUnit - 1));
+        
+      }
+    return maxProfit;
+  }
 
 
