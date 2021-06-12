@@ -217,7 +217,8 @@ class Solution {
   static List<String> exactMath = new ArrayList<>();
   
   
-  public static List<String> fuzzyMatch(String[] houseTrade, String[] streetTrade){
+  public static List<String> fuzzyMatch(String[] houseTrade,
+                                        String[] streetTrade){
     List<String> fuzMatch = new ArrayList<>();
     
     Arrays.sort(houseTrade);
@@ -244,7 +245,8 @@ class Solution {
   }
   
  
-   public static void fuzzyMatchHelper(List<String> list, String[] houseTrade,String[] streetTrade, int hLen, int sLen ){
+   public static void fuzzyMatchHelper(List<String> list,
+         String[] houseTrade,String[] streetTrade, int hLen, int sLen ){
     
     while (hLen < houseTrade.length && sLen < streetTrade.length){
       //fuzzy match
@@ -285,7 +287,8 @@ class Solution {
     Arrays.sort(houseTrade);
     Arrays.sort(streetTrade);
     
-    List<String> unMatchlist = exactMatchHelper(new ArrayList<>(), houseTrade, streetTrade, 0, 0);
+    List<String> unMatchlist = exactMatchHelper(new ArrayList<>(), 
+                            houseTrade, streetTrade, 0, 0);
   
     
     for (String str : unMatchlist){
@@ -294,9 +297,8 @@ class Solution {
   }
   
 
-  public static List<String> exactMatchHelper(List<String> list, String[] houseTrade,String[] streetTrade, int hLen, int sLen ){
-    
-        
+  public static List<String> exactMatchHelper(List<String> list,
+           String[] houseTrade,String[] streetTrade, int hLen, int sLen ){
 
     while (hLen < houseTrade.length && sLen < streetTrade.length){
       
