@@ -67,13 +67,15 @@ Buy 2 shares of AAPL ($60 value)
   
     // without fractional, it will return 255
   
-  public static int maxProfit(int[] prices, int[] futurePrices, int[] maxUnit, int amount){
+  public static int maxProfit(int[] prices, int[] futurePrices, 
+                        int[] maxUnit, int amount){
     int[][] dp = new int[prices.length][amount + 1];
     
     return maxHelper(prices, futurePrices, maxUnit, amount, dp, 0);
   }
   
-  public static int maxHelper(int[] prices, int[] futurePrices, int[] maxUnit, int amount, int[][] dp, int index){
+  public static int maxHelper(int[] prices, int[] futurePrices, 
+                  int[] maxUnit, int amount, int[][] dp, int index){
     
     if (index == prices.length){
       return amount;
@@ -96,7 +98,8 @@ Buy 2 shares of AAPL ($60 value)
           break;
       }
       
-      int res = maxHelper(prices, futurePrices, maxUnit, amount - i * prices[index], dp, index + 1);
+      int res = maxHelper(prices, futurePrices, maxUnit, 
+                          amount - i * prices[index], dp, index + 1);
       
       max = Math.max(max, res + i * futurePrices[index]);
     }
@@ -108,9 +111,11 @@ Buy 2 shares of AAPL ($60 value)
   
   // this will return 265
   
-  static double optimizeWithFractionals(int amount, int[] currentPrice, int[] futurePrice, int[] units) {
+  static double optimizeWithFractionals(int amount, int[] currentPrice, 
+                     int[] futurePrice, int[] units) {
     
-    // we need to sort by ratio, so int[] does not work as the ratio is double
+    // we need to sort by ratio, so int[] does 
+    //not work as the ratio is double
     
 //     List<int[]> stock = new ArrayList<>();
     
@@ -143,7 +148,8 @@ Buy 2 shares of AAPL ($60 value)
         stockInfos.add(new stockInfo(((double) futurePrice[i])/currentPrice[i], currentPrice[i], futurePrice[i], units[i]));
     }
     // Just sort in the descending order of the futurePrice/currentPrice ratio, because the higher the ratio, the higher the profit.
-    stockInfos.sort((stockInfo t1, stockInfo t2) -> (Double.compare(t2.ratio, t1.ratio)));
+    stockInfos.sort((stockInfo t1, stockInfo t2) -> 
+                 (Double.compare(t2.ratio, t1.ratio)));
     
     
     
