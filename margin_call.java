@@ -123,7 +123,8 @@ class Solution {
   //Collateral============ end============================================
           
   //marign ================start===========================================
-            int[] marginArray = marginMap.getOrDefault(symbol, new int[]{currQuality + quality, price});
+            int[] marginArray = marginMap.getOrDefault(symbol, 
+                  new int[]{currQuality + quality, price});
             marginMap.put(symbol, marginArray);
             marginMap.get(symbol)[1] = price;        
           
@@ -167,7 +168,8 @@ class Solution {
           
           
   //margin============================== start
-            int[] marginArray = marginMap.getOrDefault(symbol, new int[]{currQuality - quality, price});
+            int[] marginArray = marginMap.getOrDefault(symbol, 
+                   new int[]{currQuality - quality, price});
             marginMap.put(symbol, marginArray);
             marginMap.get(symbol)[0] = currQuality - quality;
             marginMap.get(symbol)[1] = price;
