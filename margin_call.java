@@ -55,6 +55,7 @@ the corresponding output would be
 [["CASH", "25"], ["AAPL", "5"], ["AAPLO", "5"], ["GOOG", "3"]
 
 
+
 class Solution {
   public static void main(String[] args) {
     ArrayList<String> strings = new ArrayList<String>();
@@ -75,7 +76,7 @@ class Solution {
     
         String[][] pro3 = {{"1", "AAPL", "B", "5", "100"},{"2", "GOOG", "B", "5", "75"}, 
                     {"3", "AAPLO", "B", "5", "50"}};
-    buildPortfolio(pro1, 1000);
+    buildPortfolio(pro, 1000);
     
   }
 
@@ -124,14 +125,15 @@ class Solution {
   //marign ================start===========================================
             int[] marginArray = marginMap.getOrDefault(symbol, new int[]{currQuality + quality, price});
             marginMap.put(symbol, marginArray);
-            marginMap.get(symbol)[1] = price;
+            marginMap.get(symbol)[1] = price;        
           
-             PriorityQueue<Map.Entry<String, int[]>> pq =
+          
+          PriorityQueue<Map.Entry<String, int[]>> pq =
             new PriorityQueue<>((a, b) -> b.getValue()[1] - a.getValue()[1]);
               
             pq.addAll(marginMap.entrySet());            
             Map.Entry<String, int[]> prev = null;
- //marign =================end==========================================          
+         
             while (totalAmount > 1000){
               
                 Map.Entry<String, int[]> currMap = pq.poll();
@@ -156,7 +158,8 @@ class Solution {
 
                 prev = currMap;
 
-            }        
+            } 
+  //marign =================end========================================== 
           
         } else if (sign.equals("S")){
             resultPro.put(str[1], currQuality - quality);
@@ -171,21 +174,17 @@ class Solution {
   //margin============================== end       
         }
       }
-    
-    
     System.out.println("CASH" + "====" + (amount - totalAmount));
-    
-    // for (Map.Entry<String, Integer> entry: resultPro.entrySet()){
-    //   System.out.println(entry.getKey() + "===" + entry.getValue());
-    // }
-    
-     System.out.println("==================" );
-    for (Map.Entry<String, int[]> entry: marginMap.entrySet()){
-      System.out.println(entry.getKey() + "===" + entry.getValue()[0]);
+    for (Map.Entry<String, Integer> entry: resultPro.entrySet()){
+      System.out.println(entry.getKey() + "===" + entry.getValue());
     }
     
-    
-    
+     System.out.println("==================" );
+    // System.out.println("CASH" + "====" + (amount - totalAmount));
+    // for (Map.Entry<String, int[]> entry: marginMap.entrySet()){
+    //   System.out.println(entry.getKey() + "===" + entry.getValue()[0]);
+    // }
   }
 }
+
 
