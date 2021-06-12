@@ -101,3 +101,112 @@ class Solution {
   }
 
 }
+================================================ this solution is from geekfor geeks===========================================================
+class Solution {
+  public static void main(String[] args) {
+    ArrayList<String> strings = new ArrayList<String>();
+    strings.add("Hello, World!");
+    strings.add("Welcome to CoderPad.");
+    strings.add("This pad is running Java " + Runtime.version().feature());
+
+    for (String string : strings) {
+      System.out.println(string);
+    }
+    
+    
+    ArrayList<Job> arr = new ArrayList<Job>();
+ 
+        // arr.add(new Job('a', 2, 100));
+        // arr.add(new Job('b', 1, 19));
+        // arr.add(new Job('c', 2, 27));
+        // arr.add(new Job('d', 1, 25));
+        // arr.add(new Job('e', 3, 15));
+    
+    
+      arr.add(new Job('a', 3, 3));
+        arr.add(new Job('b', 2, 3));
+        arr.add(new Job('c', 4, 2));
+        arr.add(new Job('d', 1, 1));
+       
+        // Function call
+        System.out.println("Following is maximum "
+                           + "profit sequence of jobs");
+ 
+        //Job job = new Job();
+ 
+        // Calling function
+        int maxProfit = printJobScheduling(arr, 3);
+    System.out.println(maxProfit);
+    
+  }
+  
+  
+  static int printJobScheduling(ArrayList<Job> arr, int t)
+    {
+    
+         int maxProfit = 0;
+        // Length of array
+        int n = arr.size();
+ 
+        // Sort all jobs according to
+        // decreasing order of profit
+        Collections.sort(arr,
+                         (a, b) -> b.profit - a.profit);
+ 
+        // To keep track of free time slots
+        boolean result[] = new boolean[t];
+ 
+        // To store result (Sequence of jobs)
+        char job[] = new char[t];
+ 
+        // Iterate through all given jobs
+        for (int i = 0; i < n; i++)
+        {
+            // Find a free slot for this job
+            // (Note that we start from the
+            // last possible slot)
+            for (int j = Math.min(t - 1, arr.get(i).deadline - 1);
+                 j >= 0; j--) {
+ 
+                // Free slot found
+                if (result[j] == false)
+                {
+                    result[j] = true;
+                    job[j] = arr.get(i).id;
+                    maxProfit += arr.get(i).profit;
+                    break;
+                }
+            }
+        }
+ 
+        // Print the sequence
+        for (char jb : job)
+        {
+            System.out.print(jb + " ");
+        }
+        System.out.println();
+    
+        return maxProfit;
+    }
+  
+  
+  
+  
+  static class Job {
+    // Each job has a unique-id,
+    // profit and deadline
+    char id;
+    int deadline, profit;
+ 
+    // Constructors
+    public Job() {}
+ 
+    public Job(char id, int profit, int deadline)
+    {
+        this.id = id;
+        this.deadline = deadline;
+        this.profit = profit;
+    }
+  }
+}
+
