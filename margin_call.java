@@ -123,6 +123,7 @@ class Solution {
   //Collateral============ end============================================
           
   //marign ================start===========================================
+           // this step is to make sure update the latest price
             int[] marginArray = marginMap.getOrDefault(symbol, 
                   new int[]{currQuality + quality, price});
             marginMap.put(symbol, marginArray);
@@ -167,7 +168,8 @@ class Solution {
             totalAmount -= quality * price;
           
           
-  //margin============================== start
+  //margin============================== start=======================
+   // this step is to make sure update the latest price
             int[] marginArray = marginMap.getOrDefault(symbol, 
                    new int[]{currQuality - quality, price});
             marginMap.put(symbol, marginArray);
