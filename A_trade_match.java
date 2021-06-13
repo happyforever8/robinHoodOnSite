@@ -283,11 +283,11 @@ class Solution {
   
   
   //====================================================================================================
-  public static void exactMatch(String[] houseTrade, String[] streetTrade ){
+  public static void unMatch(String[] houseTrade, String[] streetTrade ){
     Arrays.sort(houseTrade);
     Arrays.sort(streetTrade);
     
-    List<String> unMatchlist = exactMatchHelper(new ArrayList<>(), 
+    List<String> unMatchlist = matchHelper(new ArrayList<>(), 
                             houseTrade, streetTrade, 0, 0);
   
     
@@ -297,7 +297,7 @@ class Solution {
   }
   
 
-  public static List<String> exactMatchHelper(List<String> list,
+  public static List<String> matchHelper(List<String> list,
            String[] houseTrade,String[] streetTrade, int hLen, int sLen ){
 
     while (hLen < houseTrade.length && sLen < streetTrade.length){
